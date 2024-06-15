@@ -1,23 +1,20 @@
 # Use the official Go image as the base image
 FROM golang:1.22.4-alpine
 
-# Set the working directory inside the container
+# Environment variables which CompileDaemon requires to run
+ENV PROJECT_DIR=/app \
+    GO111MODULE=on \
+    CGO_ENABLED=0
+
+# Basic setup of the container
+RUN mkdir /app
+COPY . /app
 WORKDIR /app
 
-# Copy the Go module files
-COPY . .
+# Get CompileDaemon
+RUN go get github.com/githubnemo/CompileDaemon
+RUN go install github.com/githubnemo/CompileDaemon
 
-# Download and install the Go dependencies
-RUN go mod download
-
-# Copy the source code into the container
-COPY . .
-
-# Build the Go application
-RUN go build -o bin ./cmd/web
-
-# Expose the port that the application runs on
-EXPOSE 8080
-
-# Start the application
-CMD [ "bin/web" ]
+# The build flag sets how to build after a change has been detected in the source code
+# The command flag sets how to run the app after it has been built
+ENTRYPOINT CompileDaemon -build="go build -o bin ./cmd/web" -command="./bin/web"
