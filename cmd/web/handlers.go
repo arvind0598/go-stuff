@@ -22,7 +22,8 @@ func reserveSeat(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user := users.GetUserById(userID)
+	userService := users.GetUserService()
+	user := userService.GetUserById(userID)
 	if !user.IsAuthorised("seats", "reserve") {
 		http.Error(w, "Not authorized", http.StatusUnauthorized)
 		return
@@ -38,7 +39,8 @@ func resetSeat(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Not authorized", http.StatusUnauthorized)
 	}
 
-	user := users.GetUserById(userID)
+	userService := users.GetUserService()
+	user := userService.GetUserById(userID)
 	if !user.IsAuthorised("seats", "reset") {
 		http.Error(w, "Not authorized", http.StatusUnauthorized)
 		return

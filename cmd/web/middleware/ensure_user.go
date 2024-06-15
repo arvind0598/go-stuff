@@ -18,7 +18,8 @@ func EnsureUser(next http.Handler) http.Handler {
 			return
 		}
 
-		user, ok := users.GetCurrentUser(username, password)
+		userService := users.GetUserService()
+		user, ok := userService.GetCurrentUser(username, password)
 		if !ok {
 			http.Error(w, "Not authorized", http.StatusUnauthorized)
 			return
