@@ -1,3 +1,3 @@
-module example/hello
+module sukasa/bookings
 
 go 1.22.4
