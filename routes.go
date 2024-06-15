@@ -47,6 +47,11 @@ func reserveSeatHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if !user.IsAuthorised("reserve_seat") {
+		http.Error(w, "Not authorized", http.StatusForbidden)
+		return
+	}
+
 	if requestBody.SeatNumber == "" {
 		http.Error(w, "Seat number is required", http.StatusBadRequest)
 		return
