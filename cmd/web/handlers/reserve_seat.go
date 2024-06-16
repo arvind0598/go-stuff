@@ -25,7 +25,7 @@ func isReserveRequestValid(data reserveSeatRequest) bool {
 	return true
 }
 
-func getUserFromContext(r *http.Request) (users.User, bool) {
+func getReservingUser(r *http.Request) (users.User, bool) {
 	userID, ok := r.Context().Value(middleware.AuthUserID).(primitive.ObjectID)
 	if !ok {
 		return users.User{}, false
@@ -41,7 +41,7 @@ func getUserFromContext(r *http.Request) (users.User, bool) {
 }
 
 func ReserveSeat(w http.ResponseWriter, r *http.Request) {
-	user, ok := getUserFromContext(r)
+	user, ok := getReservingUser(r)
 	if !ok {
 		http.Error(w, "Not authorized", http.StatusUnauthorized)
 		return
@@ -61,6 +61,11 @@ func ReserveSeat(w http.ResponseWriter, r *http.Request) {
 	}
 
 	flightService := flights.GetFlightService()
-	flightService.ReserveSeat("ABC123", data.SeatNumber, passenger, user)
+	reservationError := flightService.ReserveSeat("ABC123", data.SeatNumber, passenger, user)
+	if reservationError != nil {
+		http.Error(w, reservationError.Error(), http.StatusBadRequest)
+		return
+	}
+
 	fmt.Fprintf(w, "User %s reserved a seat\n", user.Username)
 }

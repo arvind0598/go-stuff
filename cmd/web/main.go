@@ -14,7 +14,7 @@ func main() {
 
 	authenticatedRouter := http.NewServeMux()
 	authenticatedRouter.HandleFunc("POST /reserve", handlers.ReserveSeat)
-	authenticatedRouter.HandleFunc("POST /reset", resetSeat)
+	authenticatedRouter.HandleFunc("POST /reset", handlers.ResetSeat)
 	router.Handle("/", middleware.EnsureUser(authenticatedRouter))
 
 	middlewareStack := middleware.CreateStack(
