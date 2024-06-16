@@ -11,16 +11,16 @@ type Flight struct {
 }
 
 type Seat struct {
-	SeatNumber       string             `bson:"seatNumber"`
-	Passenger        Passenger          `bson:"passenger"`
-	ReservedByUserId primitive.ObjectID `bson:"reservedByUserId"`
-	ResetLogs        []BookingResetLog  `bson:"resetLogs"`
+	SeatNumber string             `bson:"seatNumber"`
+	Passenger  Passenger          `bson:"passenger"`
+	ChangeLogs []BookingChangeLog `bson:"changeLogs"`
 }
 
-type BookingResetLog struct {
-	ResetByUser            primitive.ObjectID `bson:"resetByUser"`
-	PreviousPassengerPhone string             `bson:"previousPassengerPhone"`
-	ResetAt                string             `bson:"resetAt"`
+type BookingChangeLog struct {
+	ChangedByUserId       primitive.ObjectID `bson:"changedByUserId"`
+	InitialPassengerPhone string             `bson:"initialPassengerPhone"`
+	NewPassengerPhone     string             `bson:"newPassengerPhone"`
+	ChangeAt              string             `bson:"changeAt"`
 }
 
 type Passenger struct {

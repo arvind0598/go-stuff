@@ -4,8 +4,6 @@ import (
 	"errors"
 	"sukasa/bookings/internal/users"
 	"time"
-
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type FlightService interface {
@@ -43,13 +41,13 @@ func (s flightService) ReserveSeat(flightNumber string, seatNumber string, passe
 		return err
 	}
 
-	if flight.Seats[seatIndex].ReservedByUserId != primitive.NilObjectID {
+	if flight.Seats[seatIndex].Passenger.Phone != "" {
 		return errors.New("seat already reserved")
 	}
 
+	changeLog := BookingChangeLog{currentUser.ID, "", passenger.Phone, time.Now().String()}
+	flight.Seats[seatIndex].ChangeLogs = append(flight.Seats[seatIndex].ChangeLogs, changeLog)
 	flight.Seats[seatIndex].Passenger = passenger
-	flight.Seats[seatIndex].ReservedByUserId = currentUser.ID
-
 	if !s.repository.UpdateFlightById(flight.ID, *flight) {
 		return errors.New("failed to update flight")
 	}
@@ -63,11 +61,13 @@ func (s flightService) ResetSeat(flightNumber string, seatNumber string, current
 		return err
 	}
 
-	resetLog := BookingResetLog{currentUser.ID, flight.Seats[seatIndex].Passenger.Phone, time.Now().String()}
-	flight.Seats[seatIndex].Passenger = Passenger{}
-	flight.Seats[seatIndex].ReservedByUserId = primitive.NilObjectID
-	flight.Seats[seatIndex].ResetLogs = append(flight.Seats[seatIndex].ResetLogs, resetLog)
+	if flight.Seats[seatIndex].Passenger.Phone == "" {
+		return errors.New("seat not reserved")
+	}
 
+	changeLog := BookingChangeLog{currentUser.ID, flight.Seats[seatIndex].Passenger.Phone, "", time.Now().String()}
+	flight.Seats[seatIndex].ChangeLogs = append(flight.Seats[seatIndex].ChangeLogs, changeLog)
+	flight.Seats[seatIndex].Passenger = Passenger{}
 	if !s.repository.UpdateFlightById(flight.ID, *flight) {
 		return errors.New("failed to update flight")
 	}
