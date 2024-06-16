@@ -7,17 +7,12 @@ import (
 )
 
 type FlightService interface {
-	GetFlightByNumber(flightNumber string) (Flight, bool)
 	ReserveSeat(flightNumber string, seatNumber string, passenger Passenger, currentUser users.User) error
 	ResetSeat(flightNumber string, seatNumber string, currentUser users.User) error
 }
 
 type flightService struct {
 	repository FlightRepository
-}
-
-func (s flightService) GetFlightByNumber(flightNumber string) (Flight, bool) {
-	return s.repository.FindFlightByNumber(flightNumber)
 }
 
 func (s flightService) findSeat(flightNumber string, seatNumber string) (*Flight, int, error) {
