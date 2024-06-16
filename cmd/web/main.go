@@ -5,12 +5,19 @@ import (
 	"net/http"
 	"sukasa/bookings/cmd/web/handlers"
 	"sukasa/bookings/cmd/web/middleware"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	envErr := godotenv.Load(".env")
+	if envErr != nil {
+		log.Fatalf("error loading .env file")
+	}
+
 	router := http.NewServeMux()
-	router.HandleFunc("GET /", home)
-	router.HandleFunc("POST /login", login)
+	router.HandleFunc("GET /", handlers.Home)
+	router.HandleFunc("POST /login", handlers.Login)
 
 	authenticatedRouter := http.NewServeMux()
 	authenticatedRouter.HandleFunc("POST /reserve", handlers.ReserveSeat)

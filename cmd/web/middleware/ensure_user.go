@@ -12,14 +12,15 @@ const AuthUserID contextKey = "middleware.auth.user_id"
 
 func EnsureUser(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		username, password, ok := r.BasicAuth()
-		if !ok {
+		tokenString := r.Header.Get("Authorization")
+		if tokenString == "" {
 			http.Error(w, "Unauthorized", http.StatusUnauthorized)
 			return
 		}
 
+		tokenString = tokenString[len("Bearer "):]
 		userService := users.GetUserService()
-		user, ok := userService.GetCurrentUser(username, password)
+		user, ok := userService.VerifyToken(tokenString)
 		if !ok {
 			http.Error(w, "Not authorized", http.StatusUnauthorized)
 			return

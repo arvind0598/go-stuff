@@ -10,7 +10,8 @@ import (
 )
 
 type UserRepository interface {
-	FindByUsernameAndPassword(username, password string) (User, bool)
+	FindByUsername(username string) (User, bool)
+	FindByUsernameAndPassword(username string, password string) (User, bool)
 	FindByID(id primitive.ObjectID) User
 }
 
@@ -18,9 +19,8 @@ type userRepository struct {
 	client *mongo.Client
 }
 
-func (r userRepository) FindByUsernameAndPassword(username, password string) (User, bool) {
+func (r userRepository) findUser(filter bson.M) (User, bool) {
 	collection := r.client.Database("sukasa").Collection("users")
-	filter := bson.M{"username": username, "password": password}
 
 	var result User
 	err := collection.FindOne(context.TODO(), filter).Decode(&result)
@@ -31,17 +31,20 @@ func (r userRepository) FindByUsernameAndPassword(username, password string) (Us
 	return result, true
 }
 
+func (r userRepository) FindByUsername(username string) (User, bool) {
+	filter := bson.M{"username": username}
+	return r.findUser(filter)
+}
+
+func (r userRepository) FindByUsernameAndPassword(username string, password string) (User, bool) {
+	filter := bson.M{"username": username, "password": password}
+	return r.findUser(filter)
+}
+
 func (r userRepository) FindByID(id primitive.ObjectID) User {
-	collection := r.client.Database("sukasa").Collection("users")
 	filter := bson.M{"_id": id}
-
-	var result User
-	err := collection.FindOne(context.TODO(), filter).Decode(&result)
-	if err != nil {
-		return User{}
-	}
-
-	return result
+	user, _ := r.findUser(filter)
+	return user
 }
 
 func GetRepository() UserRepository {
