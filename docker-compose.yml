@@ -6,18 +6,7 @@ services:
     volumes:
       - .:/app
     environment:
-      MONGO_URI: mongodb://root:example@mongodb:27017/sukasa
-    
-  mongodb:
-    image: mongo
-    ports:
-      - "27017:27017"
-    volumes:
-      - ./data:/data/db
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
-      MONGO_INITDB_DATABASE: sukasa
+      MONGO_URI: ${MONGO_URI}
     
 volumes:
   data:

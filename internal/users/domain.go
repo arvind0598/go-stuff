@@ -1,6 +1,10 @@
 package users
 
-import "slices"
+import (
+	"slices"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 var roles = map[string]map[string][]string{
 	"admin": {
@@ -12,7 +16,7 @@ var roles = map[string]map[string][]string{
 }
 
 type User struct {
-	ID       int
+	ID       primitive.ObjectID `bson:"_id"`
 	Username string
 	Password string
 	Roles    []string

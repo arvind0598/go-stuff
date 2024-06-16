@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"sukasa/bookings/cmd/web/middleware"
 	"sukasa/bookings/internal/users"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func home(w http.ResponseWriter, r *http.Request) {
@@ -16,7 +18,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 }
 
 func reserveSeat(w http.ResponseWriter, r *http.Request) {
-	userID, ok := r.Context().Value(middleware.AuthUserID).(int)
+	userID, ok := r.Context().Value(middleware.AuthUserID).(primitive.ObjectID)
 	if !ok {
 		http.Error(w, "Not authorized", http.StatusUnauthorized)
 		return
@@ -34,7 +36,7 @@ func reserveSeat(w http.ResponseWriter, r *http.Request) {
 }
 
 func resetSeat(w http.ResponseWriter, r *http.Request) {
-	userID, ok := r.Context().Value(middleware.AuthUserID).(int)
+	userID, ok := r.Context().Value(middleware.AuthUserID).(primitive.ObjectID)
 	if !ok {
 		http.Error(w, "Not authorized", http.StatusUnauthorized)
 	}

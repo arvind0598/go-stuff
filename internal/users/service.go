@@ -1,8 +1,10 @@
 package users
 
+import "go.mongodb.org/mongo-driver/bson/primitive"
+
 type UserService interface {
 	GetCurrentUser(username, password string) (User, bool)
-	GetUserById(id int) User
+	GetUserById(id primitive.ObjectID) User
 }
 
 type userService struct {
@@ -10,11 +12,11 @@ type userService struct {
 }
 
 func (s userService) GetCurrentUser(username, password string) (User, bool) {
-	panic("implement me")
+	return s.repository.FindByUsernameAndPassword(username, password)
 }
 
-func (s userService) GetUserById(id int) User {
-	panic("implement me")
+func (s userService) GetUserById(id primitive.ObjectID) User {
+	return s.repository.FindByID(id)
 }
 
 func GetUserService() UserService {
