@@ -17,24 +17,6 @@ func login(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Logging in..."))
 }
 
-func reserveSeat(w http.ResponseWriter, r *http.Request) {
-	userID, ok := r.Context().Value(middleware.AuthUserID).(primitive.ObjectID)
-	if !ok {
-		http.Error(w, "Not authorized", http.StatusUnauthorized)
-		return
-	}
-
-	userService := users.GetUserService()
-	user := userService.GetUserById(userID)
-	if !user.IsAuthorised("seats", "reserve") {
-		http.Error(w, "Not authorized", http.StatusUnauthorized)
-		return
-	}
-
-	// TODO: reserve the seat
-	fmt.Fprintf(w, "User %s reserved a seat\n", user.Username)
-}
-
 func resetSeat(w http.ResponseWriter, r *http.Request) {
 	userID, ok := r.Context().Value(middleware.AuthUserID).(primitive.ObjectID)
 	if !ok {

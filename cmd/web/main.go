@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"sukasa/bookings/cmd/web/handlers"
 	"sukasa/bookings/cmd/web/middleware"
 	"sukasa/bookings/internal/db"
 )
@@ -15,7 +16,7 @@ func main() {
 	router.HandleFunc("POST /login", login)
 
 	authenticatedRouter := http.NewServeMux()
-	authenticatedRouter.HandleFunc("POST /reserve", reserveSeat)
+	authenticatedRouter.HandleFunc("POST /reserve", handlers.ReserveSeat)
 	authenticatedRouter.HandleFunc("POST /reset", resetSeat) // TODO: this should only be accessible by an admin
 	router.Handle("/", middleware.EnsureUser(authenticatedRouter))
 
