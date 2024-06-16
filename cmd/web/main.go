@@ -5,12 +5,10 @@ import (
 	"net/http"
 	"sukasa/bookings/cmd/web/middleware"
 	"sukasa/bookings/internal/db"
-	"sukasa/bookings/internal/seats"
 )
 
 func main() {
 	db.GetClient()
-	seats.CreateSeats()
 
 	router := http.NewServeMux()
 	router.HandleFunc("GET /", home)
