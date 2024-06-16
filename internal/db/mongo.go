@@ -4,13 +4,19 @@ import (
 	"context"
 	"log"
 	"os"
+	"sync"
 	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func GetClient() *mongo.Client {
+var (
+	connectOnce sync.Once
+	client      *mongo.Client
+)
+
+func connect() *mongo.Client {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
@@ -20,5 +26,12 @@ func GetClient() *mongo.Client {
 	} else {
 		log.Println("Connected to Database")
 	}
+	return client
+}
+
+func GetClient() *mongo.Client {
+	connectOnce.Do(func() {
+		client = connect()
+	})
 	return client
 }
