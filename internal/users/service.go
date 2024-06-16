@@ -22,6 +22,7 @@ func (s userService) GetUserById(id primitive.ObjectID) User {
 	return s.repository.FindByID(id)
 }
 
+// Login checks if the username and password are correct and returns a JWT token
 func (s userService) Login(username string, password string) (string, bool) {
 	user, ok := s.repository.FindByUsernameAndPassword(username, password)
 
@@ -42,6 +43,7 @@ func (s userService) Login(username string, password string) (string, bool) {
 	return tokenString, true
 }
 
+// VerifyToken checks if the token is valid and returns the user
 func (s userService) VerifyToken(tokenString string) (User, bool) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		return []byte(os.Getenv("JWT_SECRET")), nil

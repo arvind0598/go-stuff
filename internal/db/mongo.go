@@ -17,6 +17,7 @@ var (
 	client      *mongo.Client
 )
 
+// Sets up debug logging for MongoDB commands to make life easier (we're not on prod so)
 func connect() *mongo.Client {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -37,6 +38,7 @@ func connect() *mongo.Client {
 	return client
 }
 
+// GetClient returns a singleton instance of the MongoDB client
 func GetClient() *mongo.Client {
 	connectOnce.Do(func() {
 		client = connect()

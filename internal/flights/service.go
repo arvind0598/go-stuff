@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+// Does fancy stuff without even knowing that the repository is made on mongo
 type FlightService interface {
 	ReserveSeat(flightNumber string, seatNumber string, passenger Passenger, currentUser users.User) error
 	ResetSeat(flightNumber string, seatNumber string, currentUser users.User) error
@@ -15,6 +16,8 @@ type flightService struct {
 	repository FlightRepository
 }
 
+// Searching in an array is a little disappoiting, but it's a small array
+// If this were MySQL, I could have optimized this with a query, but I don't know what to do in Mongo yet
 func (s flightService) findSeat(flightNumber string, seatNumber string) (*Flight, int, error) {
 	flight, ok := s.repository.FindFlightByNumber(flightNumber)
 	if !ok {
